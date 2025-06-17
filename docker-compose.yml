@@ -1,0 +1,76 @@
+services:
+  # Serviço PHP (Laravel)
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: laravel_app
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      # Usamos um volume nomeado para a pasta vendor para que ela não seja sobreposta
+      - vendor_data:/var/www/vendor
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  # Servidor Web Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_webserver
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - app-network
+
+  # Banco de Dados MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    ports:
+      - "3306:3306"
+    volumes:
+      # Volume nomeado para persistir os dados do banco
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Serviço Node (Vite/NPM)
+  node:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    container_name: node_container
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      # Mesmo princípio: volume nomeado para node_modules
+      - node_modules_data:/var/www/node_modules
+    ports:
+      - "5173:5173"
+    # tty: true é útil para manter o processo do Vite rodando
+    tty: true
+    networks:
+      - app-network
+
+# Definição dos volumes nomeados
+volumes:
+  mysql_data:
+  vendor_data:
+  node_modules_data:
+
+networks:
+  app-network:
+    driver: bridge
