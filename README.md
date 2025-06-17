@@ -1,66 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Samuca Control Finance
 
-## About Laravel
+A ferramenta definitiva para organizar suas finanças pessoais. Com o **Samuca Control Finance**, você tem o controle total sobre suas receitas e despesas de forma simples e intuitiva.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+A aplicação foi desenvolvida com **Laravel 10**, **React** e **Inertia.js**. O ambiente de desenvolvimento é totalmente containerizado com **Docker** e gerenciado via **Makefile** para uma experiência de setup simplificada.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Funcionalidades Principais
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- ✅ **Controle de Gastos:** Crie categorias para suas despesas e receitas, sabendo exatamente para onde seu dinheiro está indo.
+- 📊 **Visualize seu Saldo:** Veja o resumo das suas entradas, saídas e o saldo atual diretamente no seu dashboard.
 
-## Learning Laravel
+## Índice
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- [Requisitos](#requisitos)
+- [Instalação e Execução](#instalação-e-execução)
+- [Comandos Úteis](#comandos-úteis)
+- [Estrutura dos Serviços Docker](#estrutura-dos-serviços-docker)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Requisitos
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Antes de começar, garanta que você tenha os seguintes softwares instalados na sua máquina:
 
-## Laravel Sponsors
+- **Docker Engine:** [Link para instalação](https://docs.docker.com/engine/install/)
+- **Docker Compose V2:** Geralmente já vem com o Docker Desktop ou pode ser instalado como plugin do CLI.
+- **make:**
+    - Linux/macOS: Geralmente já vem instalado.
+    - Windows: Recomendado o uso do WSL2 (Windows Subsystem for Linux) ou através do Git Bash.
+- **Git:** Essencial para clonar o repositório.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Instalação e Execução
 
-### Premium Partners
+Para subir a aplicação pela primeira vez, siga os passos abaixo. Graças ao Makefile, o processo é muito simples.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+1. **Clone o repositório:**
 
-## Contributing
+     ```bash
+     git clone https://github.com/Lucassamuel97/control-finance
+     ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Navegue até o diretório do projeto:**
 
-## Code of Conduct
+     ```bash
+     cd control-finance
+     ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Execute o comando de setup inicial:**
 
-## Security Vulnerabilities
+     ```bash
+     make setup
+     ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+     Este comando é executado apenas na primeira vez. Ele irá automaticamente:
 
-## License
+     - Copiar o arquivo `.env.example` para `.env`.
+     - Construir e subir todos os containers Docker.
+     - Ajustar as permissões das pastas `storage` e `bootstrap/cache`.
+     - Instalar as dependências do Composer (`composer install`).
+     - Gerar a chave da aplicação Laravel (`php artisan key:generate`).
+     - Rodar as migrações e seeds do banco de dados (`php artisan migrate --seed`).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. **Acesse a aplicação:**
+
+     - 🌐 Aplicação Web: [http://localhost:8080](http://localhost:8080)
+     - ⚡️ Servidor Vite HMR: A porta 5173 estará ativa para o Hot Module Replacement.
+
+Para iniciar o trabalho nos dias seguintes, você só precisa usar o comando:
+
+```bash
+make up
+```
+
+## Comandos Úteis
+
+Todas as operações comuns do dia a dia podem ser executadas através de comandos `make` simples.
+
+| Comando                              | Descrição                                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `make setup`                         | Executa o setup completo do projeto. Use apenas na primeira vez.                            |
+| `make up`                            | Sobe os containers. Use para iniciar o trabalho no dia a dia.                               |
+| `make down`                          | Para e remove os containers.                                                                |
+| `make stop`                          | Apenas para os containers, sem removê-los.                                                  |
+| `make logs service=<nome>`           | Mostra os logs de um serviço específico. Ex: `make logs service=app`.                       |
+| `make artisan cmd="<comando>"`       | Executa um comando Artisan no container app. Ex: `make artisan cmd="cache:clear"`.          |
+| `make composer cmd="<comando>"`      | Executa um comando Composer no container app. Ex: `make composer cmd="require laravel/breeze"`. |
+| `make npm cmd="<comando>"`           | Executa um comando NPM no container node. Ex: `make npm cmd="install --save-dev prettier"`. |
+
+## Estrutura dos Serviços Docker
+
+O ambiente é composto pelos seguintes serviços, definidos no `docker-compose.yml`:
+
+- **app:** O container principal com PHP 8.2-FPM que executa a aplicação Laravel.
+- **nginx:** Servidor web Alpine Nginx que atua como proxy reverso para o serviço app. É o ponto de entrada da aplicação.
+- **mysql:** Banco de dados MySQL 8.0. Os dados são persistidos em um volume Docker para não serem perdidos.
+- **node:** Container com Node.js 20 que executa o servidor de desenvolvimento do Vite para compilação de assets e Hot Module Replacement (HMR).
+
+## Tecnologias Utilizadas
+
+- **Backend:** Laravel 10
+- **Frontend:** React, Inertia.js, Vite
+- **Banco de Dados:** MySQL 8
+- **Ambiente:** Docker, Docker Compose
