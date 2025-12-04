@@ -33,12 +33,30 @@ class DashboardController extends Controller
             ->orderBy('reference_date', 'desc')
             ->get();
 
+        // Calcula totais por categoria
+        $categoryTotals = $user->transactions()
+            ->with('category')
+            ->whereYear('reference_date', $year)
+            ->whereMonth('reference_date', $month)
+            ->selectRaw('category_id, type, SUM(amount) as total')
+            ->groupBy('category_id', 'type')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'category_id' => $item->category_id,
+                    'category_name' => $item->category->name ?? 'Sem categoria',
+                    'type' => $item->type,
+                    'total' => $item->total,
+                ];
+            });
+
         // Busca categorias para o formulário
         $categories = $user->categories()->get();
 
         return Inertia::render('Dashboard', [
             'transactions' => $transactions,
             'categories' => $categories,
+            'categoryTotals' => $categoryTotals,
             'currentMonth' => $month,
             'currentYear' => $year,
         ]);

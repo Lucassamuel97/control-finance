@@ -9,11 +9,12 @@ import { formatMonthYear } from '@/lib/formatters';
 import { useFinancialCalculations } from '@/hooks/useFinancialCalculations';
 import { useTransactionForm } from '@/hooks/useTransactionForm';
 import FinancialSummary from '@/Components/Dashboard/FinancialSummary';
+import CategoryTotals from '@/Components/Dashboard/CategoryTotals';
 import TransactionTable from '@/Components/Dashboard/TransactionTable';
 import TransactionDialog from '@/Components/Dashboard/TransactionDialog';
 import ConfirmDeleteDialog from '@/Components/Dashboard/ConfirmDeleteDialog';
 
-export default function Dashboard({ auth, transactions, categories, currentMonth, currentYear }) {
+export default function Dashboard({ auth, transactions, categories, categoryTotals, currentMonth, currentYear }) {
     const { flash } = usePage().props;
     const [selectedDate, setSelectedDate] = useState(new Date(currentYear, currentMonth - 1));
 
@@ -96,6 +97,8 @@ export default function Dashboard({ auth, transactions, categories, currentMonth
                         totalExpense={totalExpense}
                         balance={balance}
                     />
+
+                    <CategoryTotals categoryTotals={categoryTotals} />
 
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
