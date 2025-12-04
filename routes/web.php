@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,8 +29,8 @@ Route::get('/', function () {
     ]);
 });
 
-// Dashboard - Rota principal após o login
-Route::get('/dashboard', [TransactionController::class, 'index'])
+// Dashboard - Rota principal após o login (visualização mensal)
+Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 // Grupo de rotas protegidas por autenticação
@@ -42,7 +43,8 @@ Route::middleware('auth')->group(function () {
     // Rotas para Categorias
     Route::resource('categories', CategoryController::class)->except(['show']);
 
-    // Rotas para Transações (a principal já é o dashboard)
+    // Rotas para Transações
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::patch('/transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');

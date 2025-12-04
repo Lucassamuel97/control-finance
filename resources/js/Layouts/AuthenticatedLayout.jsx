@@ -24,6 +24,9 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
                                 </NavLink>
+                                <NavLink href={route('transactions.index')} active={route().current('transactions.index')}>
+                                    Transações
+                                </NavLink>
                                 <NavLink href={route('categories.index')} active={route().current('categories.index')}>
                                     Categorias
                                 </NavLink>
@@ -97,6 +100,9 @@ export default function Authenticated({ user, header, children }) {
                     <div className="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('transactions.index')} active={route().current('transactions.index')}>
+                            Transações
                         </ResponsiveNavLink>
                         {/* LINK ADICIONADO AQUI TAMBÉM (PARA MOBILE) */}
                         <ResponsiveNavLink href={route('categories.index')} active={route().current('categories.index')}>

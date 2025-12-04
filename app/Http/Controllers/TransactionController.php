@@ -12,17 +12,17 @@ use Inertia\Response;
 class TransactionController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of all transactions.
      */
     public function index(): Response
     {
         $user = Auth::user();
 
-        // Carrega transações com o relacionamento 'category'
+        // Carrega todas as transações com o relacionamento 'category'
         $transactions = $user->transactions()->with('category')->latest('reference_date')->get();
         $categories = $user->categories()->get();
 
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Transactions', [
             'transactions' => $transactions,
             'categories' => $categories,
             'status' => session('status'),
@@ -45,7 +45,7 @@ class TransactionController extends Controller
 
         $request->user()->transactions()->create($validated);
 
-        return redirect(route('dashboard'))->with('success', 'Transação criada com sucesso.');
+        return redirect(route('transactions.index'))->with('success', 'Transação criada com sucesso.');
     }
 
     /**
@@ -66,7 +66,7 @@ class TransactionController extends Controller
 
         $transaction->update($validated);
 
-        return redirect(route('dashboard'))->with('success', 'Transação atualizada com sucesso.');
+        return redirect(route('transactions.index'))->with('success', 'Transação atualizada com sucesso.');
     }
 
     /**
@@ -78,6 +78,6 @@ class TransactionController extends Controller
 
         $transaction->delete();
 
-        return redirect(route('dashboard'))->with('success', 'Transação excluída com sucesso.');
+        return redirect(route('transactions.index'))->with('success', 'Transação excluída com sucesso.');
     }
 }
