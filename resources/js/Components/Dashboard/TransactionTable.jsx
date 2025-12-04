@@ -20,7 +20,16 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
             <TableBody>
                 {transactions.length > 0 ? transactions.map(transaction => (
                     <TableRow key={transaction.id}>
-                        <TableCell className="font-medium">{transaction.description}</TableCell>
+                        <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                                <span>{transaction.description}</span>
+                                {transaction.is_installment && (
+                                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                                        {transaction.installment_number}/{transaction.total_installments}
+                                    </span>
+                                )}
+                            </div>
+                        </TableCell>
                         <TableCell>{transaction.category?.name || 'N/A'}</TableCell>
                         <TableCell>{formatDate(transaction.reference_date)}</TableCell>
                         <TableCell className={`text-right font-bold ${transaction.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>

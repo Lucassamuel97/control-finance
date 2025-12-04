@@ -106,6 +106,48 @@ export default function TransactionDialog({
                                 {errors.frequency && <p className="text-red-500 text-xs mt-1">{errors.frequency}</p>}
                             </div>
                         </div>
+
+                        {!isEditMode && (
+                            <>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="is_installment" className="text-right">Parcelado?</Label>
+                                    <div className="col-span-3 flex items-center">
+                                        <input
+                                            id="is_installment"
+                                            type="checkbox"
+                                            checked={data.is_installment}
+                                            onChange={e => setData('is_installment', e.target.checked)}
+                                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                        />
+                                        <span className="ml-2 text-sm text-gray-600">
+                                            Dividir em parcelas
+                                        </span>
+                                    </div>
+                                    {errors.is_installment && <p className="text-red-500 text-xs mt-1 col-start-2 col-span-3">{errors.is_installment}</p>}
+                                </div>
+
+                                {data.is_installment && (
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label htmlFor="total_installments" className="text-right">Nº Parcelas</Label>
+                                        <div className="col-span-3">
+                                            <Input 
+                                                id="total_installments" 
+                                                type="number" 
+                                                min="2"
+                                                max="60"
+                                                value={data.total_installments} 
+                                                onChange={e => setData('total_installments', e.target.value)} 
+                                                className="w-full" 
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Valor por parcela: R$ {data.amount > 0 ? (data.amount / data.total_installments).toFixed(2) : '0.00'}
+                                            </p>
+                                        </div>
+                                        {errors.total_installments && <p className="text-red-500 text-xs mt-1 col-start-2 col-span-3">{errors.total_installments}</p>}
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>

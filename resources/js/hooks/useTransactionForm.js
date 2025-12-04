@@ -20,7 +20,9 @@ export const useTransactionForm = (redirectRoute = 'dashboard') => {
         reference_date: '',
         type: 'expense',
         frequency: 'variable',
-        category_id: ''
+        category_id: '',
+        is_installment: false,
+        total_installments: 2
     });
 
     const handleTypeChange = (value) => {
@@ -47,7 +49,9 @@ export const useTransactionForm = (redirectRoute = 'dashboard') => {
             reference_date: formatDateForInput(new Date(transaction.reference_date)),
             type: transaction.type,
             frequency: transaction.frequency,
-            category_id: transaction.category_id.toString()
+            category_id: transaction.category_id.toString(),
+            is_installment: transaction.is_installment || false,
+            total_installments: transaction.total_installments || 2
         });
         setIsDialogOpen(true);
     };

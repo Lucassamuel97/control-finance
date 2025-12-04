@@ -23,6 +23,10 @@ class Transaction extends Model
         'description',
         'amount',
         'reference_date',
+        'installments_group_id',
+        'installment_number',
+        'total_installments',
+        'is_installment',
     ];
 
     /**
@@ -33,6 +37,9 @@ class Transaction extends Model
     protected $casts = [
         'reference_date' => 'date',
         'amount' => 'decimal:2',
+        'is_installment' => 'boolean',
+        'installment_number' => 'integer',
+        'total_installments' => 'integer',
     ];
 
     /**
@@ -49,5 +56,39 @@ class Transaction extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get all installments from the same group.
+     */
+    public function installmentSiblings()
+    {
+        if (!$this->is_installment || !$this->installments_group_id) {
+            return collect([]);
+        }
+
+        return static::where('installments_group_id', $this->installments_group_id)
+            ->orderBy('installment_number')
+            ->get();
+    }
+
+    /**
+     * Check if this is an installment transaction.
+     */
+    public function isInstallment(): bool
+    {
+        return $this->is_installment === true;
+    }
+
+    /**
+     * Get formatted installment label (e.g., "1/4").
+     */
+    public function getInstallmentLabelAttribute(): ?string
+    {
+        if (!$this->is_installment) {
+            return null;
+        }
+
+        return "{$this->installment_number}/{$this->total_installments}";
     }
 }
