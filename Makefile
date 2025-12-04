@@ -2,10 +2,10 @@
 SHELL := /bin/bash
 
 # Comandos Docker Compose
-COMPOSE_UP = docker-compose up --build -d
-COMPOSE_DOWN = docker-compose down
-COMPOSE_EXEC_APP = docker-compose exec app
-COMPOSE_EXEC_NODE = docker-compose exec node
+COMPOSE_UP = docker compose up --build -d
+COMPOSE_DOWN = docker compose down
+COMPOSE_EXEC_APP = docker compose exec app
+COMPOSE_EXEC_NODE = docker compose exec node
 
 # Comandos Artisan
 ARTISAN = $(COMPOSE_EXEC_APP) php artisan
@@ -57,11 +57,11 @@ down: ## Para e remove os containers
 
 stop: ## Apenas para os containers, sem remover
 	@echo "Parando os containers..."
-	docker-compose stop
+	docker compose stop
 
 logs: ## Mostra os logs de um container específico (ex: make logs service=app)
 	@echo "Mostrando logs para o serviço: $(service)..."
-	docker-compose logs -f $(service)
+	docker compose logs -f $(service)
 
 ## --------------------------------------
 ##  Comandos da Aplicação
