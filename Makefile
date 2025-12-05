@@ -17,7 +17,19 @@ COMPOSER = $(COMPOSE_EXEC_APP) composer
 .SILENT:
 
 # Define alvos que não são arquivos
-.PHONY: setup up down stop logs artisan composer npm
+.PHONY: setup up down stop logs artisan composer npm test test-filter build dev cache-clear rebuild fresh optimize permissions restart help
+
+# Target padrão - mostra a ajuda
+.DEFAULT_GOAL := help
+
+help: ## Mostra esta mensagem de ajuda
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo "  Control Finance - Comandos Disponíveis"
+	@echo "════════════════════════════════════════════════════════════════"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo ""
 
 ## --------------------------------------
 ##  Setup Inicial
@@ -86,3 +98,51 @@ test: ## Executa os testes da aplicação
 test-filter: ## Executa testes filtrados (ex: make test-filter filter="FixedTransactionTest")
 	@echo "Executando testes com filtro: $(filter)..."
 	$(ARTISAN) test --filter $(filter)
+
+## --------------------------------------
+##  Build e Cache
+## --------------------------------------
+
+build: ## Reconstrói os assets do frontend (CSS/JS)
+	@echo "Reconstruindo os assets do frontend..."
+	$(COMPOSE_EXEC_NODE) npm run build
+
+dev: ## Inicia o servidor de desenvolvimento do Vite
+	@echo "Iniciando Vite em modo desenvolvimento..."
+	$(COMPOSE_EXEC_NODE) npm run dev
+
+cache-clear: ## Limpa todos os caches da aplicação
+	@echo "Limpando cache de configuração..."
+	$(ARTISAN) config:clear
+	@echo "Limpando cache de rotas..."
+	$(ARTISAN) route:clear
+	@echo "Limpando cache de views..."
+	$(ARTISAN) view:clear
+	@echo "Limpando cache da aplicação..."
+	$(ARTISAN) cache:clear
+	@echo "✅ Todos os caches foram limpos!"
+
+rebuild: cache-clear build ## Limpa cache e reconstrói os assets
+	@echo "✅ Rebuild completo finalizado!"
+
+fresh: ## Reseta o banco de dados e roda as migrations com seeders
+	@echo "⚠️  ATENÇÃO: Isso irá apagar todos os dados do banco!"
+	@echo "Resetando banco de dados..."
+	$(ARTISAN) migrate:fresh --seed
+	@echo "✅ Banco de dados resetado!"
+
+optimize: ## Otimiza a aplicação para produção (cache de config, rotas e views)
+	@echo "Otimizando aplicação..."
+	$(ARTISAN) config:cache
+	$(ARTISAN) route:cache
+	$(ARTISAN) view:cache
+	@echo "✅ Aplicação otimizada!"
+
+permissions: ## Ajusta permissões das pastas storage e bootstrap/cache
+	@echo "Ajustando permissões..."
+	$(COMPOSE_EXEC_APP) chown -R www-data:www-data storage bootstrap/cache
+	$(COMPOSE_EXEC_APP) chmod -R 775 storage bootstrap/cache
+	@echo "✅ Permissões ajustadas!"
+
+restart: down up ## Reinicia todos os containers
+	@echo "✅ Containers reiniciados!"
