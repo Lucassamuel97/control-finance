@@ -103,6 +103,11 @@ export default function TransactionDialog({
                                         <SelectItem value="variable">Variável</SelectItem>
                                     </SelectContent>
                                 </Select>
+                                {!isEditMode && data.frequency === 'fixed' && (
+                                    <p className="text-xs text-blue-600 mt-1">
+                                        ℹ️ Serão criadas 12 transações mensais automaticamente
+                                    </p>
+                                )}
                                 {errors.frequency && <p className="text-red-500 text-xs mt-1">{errors.frequency}</p>}
                             </div>
                         </div>

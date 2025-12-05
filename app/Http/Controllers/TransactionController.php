@@ -50,7 +50,13 @@ class TransactionController extends Controller
         if ($request->input('is_installment') && $request->input('total_installments') > 1) {
             $this->createInstallments($request->user(), $validated);
             $message = 'Transação parcelada criada com sucesso.';
-        } else {
+        } 
+        // Se for fixa, criar 12 transações mensais
+        elseif ($validated['frequency'] === 'fixed') {
+            $this->createFixedTransactions($request->user(), $validated);
+            $message = '12 transações fixas criadas com sucesso.';
+        } 
+        else {
             // Transação única
             $request->user()->transactions()->create($validated);
             $message = 'Transação criada com sucesso.';
@@ -140,6 +146,31 @@ class TransactionController extends Controller
                 'installment_number' => $i,
                 'total_installments' => $totalInstallments,
                 'is_installment' => true,
+            ]);
+        }
+    }
+
+    /**
+     * Create 12 monthly fixed transactions.
+     */
+    private function createFixedTransactions($user, array $data): void
+    {
+        $groupId = (string) Str::uuid();
+        $referenceDate = \Carbon\Carbon::parse($data['reference_date']);
+        $totalMonths = 12;
+
+        for ($i = 0; $i < $totalMonths; $i++) {
+            $user->transactions()->create([
+                'category_id' => $data['category_id'],
+                'type' => $data['type'],
+                'frequency' => $data['frequency'],
+                'description' => $data['description'],
+                'amount' => $data['amount'],
+                'reference_date' => $referenceDate->copy()->addMonths($i),
+                'installments_group_id' => $groupId,
+                'installment_number' => $i + 1,
+                'total_installments' => $totalMonths,
+                'is_installment' => false, // Não é parcelamento, é recorrência fixa
             ]);
         }
     }

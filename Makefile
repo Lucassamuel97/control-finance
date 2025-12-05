@@ -78,3 +78,11 @@ composer: ## Executa um comando Composer (ex: make composer cmd="require laravel
 npm: ## Executa um comando NPM no container node (ex: make npm cmd="install --save-dev prettier")
 	@echo "Executando: npm $(cmd)..."
 	$(COMPOSE_EXEC_NODE) npm $(cmd)
+
+test: ## Executa os testes da aplicação
+	@echo "Executando os testes..."
+	$(ARTISAN) test
+
+test-filter: ## Executa testes filtrados (ex: make test-filter filter="FixedTransactionTest")
+	@echo "Executando testes com filtro: $(filter)..."
+	$(ARTISAN) test --filter $(filter)
