@@ -64,6 +64,8 @@ export const useTransactionForm = (redirectRoute = 'dashboard') => {
     const submit = (e) => {
         e.preventDefault();
         const options = {
+            preserveState: true,
+            preserveScroll: true,
             onSuccess: () => {
                 reset();
                 setIsDialogOpen(false);
@@ -83,6 +85,8 @@ export const useTransactionForm = (redirectRoute = 'dashboard') => {
     const handleDelete = () => {
         if (transactionToDelete) {
             destroy(route('transactions.destroy', transactionToDelete.id), {
+                preserveState: true,
+                preserveScroll: true,
                 onSuccess: () => {
                     setConfirmDeleteDialogOpen(false);
                     setTransactionToDelete(null);

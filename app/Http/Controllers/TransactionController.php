@@ -40,7 +40,7 @@ class TransactionController extends Controller
             'type' => ['required', Rule::in(['income', 'expense'])],
             'frequency' => ['required', Rule::in(['fixed', 'variable'])],
             'description' => 'required|string|max:255',
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:0.01|max:99999999.99',
             'reference_date' => 'required|date',
             'is_installment' => 'nullable|boolean',
             'total_installments' => 'nullable|required_if:is_installment,true|integer|min:2|max:60',
@@ -62,7 +62,7 @@ class TransactionController extends Controller
             $message = 'Transação criada com sucesso.';
         }
 
-        return redirect(route('transactions.index'))->with('success', $message);
+        return redirect()->back()->with('success', $message);
     }
 
     /**
@@ -77,7 +77,7 @@ class TransactionController extends Controller
             'type' => ['required', Rule::in(['income', 'expense'])],
             'frequency' => ['required', Rule::in(['fixed', 'variable'])],
             'description' => 'required|string|max:255',
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:0.01|max:99999999.99',
             'reference_date' => 'required|date',
             'update_all_installments' => 'nullable|boolean',
         ]);
@@ -92,7 +92,7 @@ class TransactionController extends Controller
             $message = 'Transação atualizada com sucesso.';
         }
 
-        return redirect(route('transactions.index'))->with('success', $message);
+        return redirect()->back()->with('success', $message);
     }
 
     /**
@@ -111,7 +111,7 @@ class TransactionController extends Controller
             $message = 'Transação excluída com sucesso.';
         }
 
-        return redirect(route('transactions.index'))->with('success', $message);
+        return redirect()->back()->with('success', $message);
     }
 
     /**
@@ -121,19 +121,27 @@ class TransactionController extends Controller
     {
         $groupId = (string) Str::uuid();
         $totalInstallments = $data['total_installments'];
-        $installmentAmount = round($data['amount'] / $totalInstallments, 2);
+        $totalAmount = (float) $data['amount'];
         $referenceDate = \Carbon\Carbon::parse($data['reference_date']);
 
-        // Ajuste para garantir que a soma das parcelas seja igual ao total
-        $remainder = $data['amount'] - ($installmentAmount * $totalInstallments);
+        // Calcula o valor de cada parcela (arredondado para baixo)
+        $installmentAmount = floor(($totalAmount / $totalInstallments) * 100) / 100;
+        
+        // Calcula o resto que será adicionado nas primeiras parcelas
+        $remainder = round($totalAmount - ($installmentAmount * $totalInstallments), 2);
+        $centsToDistribute = (int) round($remainder * 100);
 
         for ($i = 1; $i <= $totalInstallments; $i++) {
             $amount = $installmentAmount;
             
-            // Adiciona o resto na última parcela
-            if ($i === $totalInstallments && $remainder != 0) {
-                $amount += $remainder;
+            // Distribui os centavos restantes nas primeiras parcelas
+            if ($centsToDistribute > 0) {
+                $amount += 0.01;
+                $centsToDistribute--;
             }
+            
+            // Garante que o valor está formatado corretamente
+            $amount = round($amount, 2);
 
             $user->transactions()->create([
                 'category_id' => $data['category_id'],
